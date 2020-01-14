@@ -1,0 +1,106 @@
+<html>
+<header><title>Invoices</title></header>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+<body>
+
+<h1 class="ui header">Invoice Details:</h1>
+
+<form class="ui form" id="invoice-form" action="/v1/invoice" method="post">
+    <div class="fields">
+    <div class="field">
+      <label>Amount</label>
+      <input type="text" name="amount" placeholder="Amount (in msatoshi)">
+    </div>
+    <div class="field">
+      <label>Label</label>
+      <input type="text" name="label" placeholder="Label">
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <input type="text" name="description" placeholder="Description">
+    </div>
+  </div>
+  <button class="ui right labeled icon button" type = "submit">
+  <i class="right arrow icon"></i>
+  Generate Invoice
+</button>
+</form>
+<div class="ui visible message" id = "response">
+  <p id = "bolt11"></p>
+</div>
+<button class="ui secondary button" onclick="window.location.href = 'https://htlc.me';" target = "_blank">
+  htlc.me
+</button>
+<br></br>
+
+<h1 class="ui header">Check payment status:</h1>
+<form class="ui form" id="paymentstatus" action="/v1/invoiceStatus" method="post">
+    <div class="fields">
+    <div class="field">
+      <label>Invoice Label</label>
+      <input type="text" name="invoiceLabel" placeholder="Invoice Label">
+    </div>
+    </div>
+  <button class="ui right labeled icon button" type = "submit">
+  <i class="right arrow icon"></i>
+  Check payment status
+</button>
+</form>
+<div class="ui visible message" id = "statusresponse">
+  <p id = "paymentresponse"></p>
+</div>
+
+<script>
+        var frm = $('#invoice-form');
+	var paymentStatus = $('#paymentstatus');
+
+    frm.submit(function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+		    document.getElementById("bolt11").innerHTML = data["bolt11"];
+            },
+            error: function (jqXHR, err) {
+		    if(jqXHR.status === 400) {
+                            console.log(jqXHR.responseText);
+                            let errorMessage = JSON.parse(jqXHR.responseText);
+                    document.getElementById("bolt11").innerHTML = errorMessage.error;
+            }
+	    },
+        });
+    });  
+
+	paymentStatus.submit(function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+            type: paymentStatus.attr('method'),
+            url: paymentStatus.attr('action'),
+            data: paymentStatus.serialize(),
+            success: function (data) {
+             
+                    document.getElementById("paymentresponse").innerHTML = data["paymentStatus"];
+            },
+            error: function (jqXHR, err) {
+                
+		    if(jqXHR.status === 400) {
+			    let errorMessage = JSON.parse(jqXHR.responseText);
+                    document.getElementById("paymentresponse").innerHTML = errorMessage.error;
+		    }
+            },
+        });
+    });
+</script>
+</body>
+</html>
