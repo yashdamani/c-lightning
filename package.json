@@ -1,13 +1,13 @@
 {
-  "name": "api",
+  "name": "c-lightning rest-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Accessing c-lightning rpc interface using REST API",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Yash Damani",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
